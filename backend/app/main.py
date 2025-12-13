@@ -2,12 +2,13 @@ from fastapi import FastAPI
 from app.core.config import settings
 # Import db session setup to ensure it's loaded (even if not used yet)
 from app.db.session import engine
-# Import Base to ensure models are registered (future proofing)
+# Import Base to ensure models are registered
 from app.db.base import Base
+# Import all models to ensure they are attached to Base.metadata
+from app.models import User, Sweet
 
-# In a real app, we would create tables here or use Alembic migrations.
-# For now, this is just a placeholder to show where db init might happen.
-# Base.metadata.create_all(bind=engine) 
+# Create tables on application startup
+Base.metadata.create_all(bind=engine) 
 
 def create_application() -> FastAPI:
     """
