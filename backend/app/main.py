@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 # Import db session setup to ensure it's loaded (even if not used yet)
 from app.db.session import engine
@@ -53,6 +54,15 @@ def create_application() -> FastAPI:
     return application
 
 app = create_application()
+
+# Add CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 if __name__ == "__main__":
     import uvicorn
