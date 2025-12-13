@@ -136,7 +136,14 @@ pytest
 This will execute the test suite covering authentication, sweet CRUD operations, and inventory logic.
 
 ## 7. Screenshots
-*(Placeholder for actual screenshots - In a real submission, images would be placed here to show the Login Page, Dashboard, Cart Drawer, and Admin features.)*
+<img width="1919" height="911" alt="image" src="https://github.com/user-attachments/assets/fd36b3e2-7e08-4b8c-837f-868ba98dee96" />
+
+<img width="501" height="913" alt="image" src="https://github.com/user-attachments/assets/d736bab2-3ddc-4e3a-8258-596cf8c2428e" />
+
+<img width="1919" height="901" alt="image" src="https://github.com/user-attachments/assets/e562c213-ae88-436c-811e-5057b5b4aa14" />
+
+
+
 
 ## 8. My AI Usage
 
