@@ -1,17 +1,24 @@
-import os
-from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
-# Project base path
-# referencing up to the 'backend' folder
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+from pydantic import AnyHttpUrl, EmailStr, validator
+from pydantic_settings import BaseSettings
 
-class Settings:
+class Settings(BaseSettings):
     PROJECT_NAME: str = "Sweet Shop Management System"
     PROJECT_VERSION: str = "1.0.0"
     
-    # Database settings
-    # SQLite database file will be created in the backend directory
-    # 'sqlite:///./sweet_shop.db' is also common but using absolute path is safer
-    SQLALCHEMY_DATABASE_URL: str = f"sqlite:///{BASE_DIR}/sweet_shop.db"
+    # Secrets
+    # In production, these should be loaded from env vars.
+    # We provide defaults here for the local assignment dev environment.
+    SECRET_KEY: str = "CHANGE_THIS_TO_A_STRING_SECRET_IN_PRODUCTION"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    
+    # Database
+    SQLALCHEMY_DATABASE_URL: str = "sqlite:///./sweet_shop.db"
+
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
 
 settings = Settings()

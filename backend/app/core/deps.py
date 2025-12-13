@@ -4,7 +4,7 @@ from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.user import User
-from app.core.security import SECRET_KEY, ALGORITHM
+from app.core.config import settings
 
 # This scheme looks for the 'Authorization' header with 'Bearer <token>'
 # tokenUrl refers to the relative URL where the client can get a token
@@ -24,7 +24,7 @@ def get_current_user(
     )
     
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         user_id: str = payload.get("sub")
         if user_id is None:
             raise credentials_exception

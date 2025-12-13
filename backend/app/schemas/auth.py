@@ -12,8 +12,7 @@ class UserResponse(UserBase):
     id: int
     role: str
     
-    class Config:
-        orm_mode = True # Supports reading from SQLAlchemy ORM models
+    model_config = {"from_attributes": True}
 
 class UserLogin(BaseModel):
     username: str # Using 'username' to match standard OAuth2, but we treat it as email
