@@ -1,0 +1,40 @@
+from fastapi import FastAPI
+from app.core.config import settings
+# Import db session setup to ensure it's loaded (even if not used yet)
+from app.db.session import engine
+# Import Base to ensure models are registered (future proofing)
+from app.db.base import Base
+
+# In a real app, we would create tables here or use Alembic migrations.
+# For now, this is just a placeholder to show where db init might happen.
+# Base.metadata.create_all(bind=engine) 
+
+def create_application() -> FastAPI:
+    """
+    Application Factory to create and configure the FastAPI application.
+    """
+    application = FastAPI(
+        title=settings.PROJECT_NAME,
+        version=settings.PROJECT_VERSION,
+        description="Backend for Sweet Shop Management System",
+    )
+
+    # Simple Health Check Endpoint
+    @application.get("/health", tags=["Health"])
+    def health_check():
+        """
+        Checks if the application is running.
+        Returns a simple status ok message.
+        """
+        return {"status": "ok", "app_name": settings.PROJECT_NAME}
+
+    return application
+
+app = create_application()
+
+if __name__ == "__main__":
+    import uvicorn
+    # Run the application using Uvicorn
+    # host 127.0.0.1 is localhost
+    # reload=True enables auto-reload on code changes (dev mode)
+    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)
