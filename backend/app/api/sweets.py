@@ -121,3 +121,45 @@ def delete_sweet(
     db.delete(sweet)
     db.commit()
     return {"msg": "Sweet deleted successfully"}
+
+from app.schemas.inventory import RestockRequest
+
+@router.post("/{sweet_id}/purchase", status_code=status.HTTP_200_OK)
+def purchase_sweet(
+    sweet_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Purchase one unit of a sweet. Authenticated users.
+    """
+    sweet = db.query(Sweet).filter(Sweet.id == sweet_id).first()
+    if not sweet:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sweet not found")
+    
+    if sweet.quantity <= 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Out of stock")
+        
+    sweet.quantity -= 1
+    db.add(sweet)
+    db.commit()
+    return {"msg": "Purchase successful", "remaining_quantity": sweet.quantity}
+
+@router.post("/{sweet_id}/restock", status_code=status.HTTP_200_OK)
+def restock_sweet(
+    sweet_id: int,
+    restock_in: RestockRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_admin)
+):
+    """
+    Restock sweet quantity. Only Admins.
+    """
+    sweet = db.query(Sweet).filter(Sweet.id == sweet_id).first()
+    if not sweet:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sweet not found")
+        
+    sweet.quantity += restock_in.amount
+    db.add(sweet)
+    db.commit()
+    return {"msg": "Restock successful", "new_quantity": sweet.quantity}
