@@ -7,6 +7,7 @@ from app.db.base import Base
 # Import all models to ensure they are attached to Base.metadata
 from app.models import User, Sweet
 from app.api.auth import router as auth_router
+from app.api.sweets import router as sweets_router
 from jose import jwt
 
 # Create tables on application startup
@@ -24,6 +25,7 @@ def create_application() -> FastAPI:
     
     # Register Routers
     application.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+    application.include_router(sweets_router, prefix="/api/sweets", tags=["Sweets"])
 
     # --- Temporary Test Routes for Phase 5 TDD ---
     from fastapi import Depends
