@@ -1,5 +1,5 @@
 import pytest
-from typing import Generator
+from typing import Generator, Dict
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
@@ -7,6 +7,8 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.db.base import Base
 from app.db.session import get_db
+from app.core.security import get_password_hash
+from app.models.user import User
 
 # Use a separate SQLite database for testing to avoid affecting the development DB
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
@@ -54,3 +56,41 @@ def client(db) -> Generator:
     
     # Clear overrides after test
     app.dependency_overrides.clear()
+
+@pytest.fixture(scope="function")
+def normal_user_token_headers(client, db) -> Dict[str, str]:
+    """
+    Fixture creates a normal user and returns valid Authorization headers.
+    """
+    password = "password123"
+    user_in = User(
+        name="Normal User",
+        email="normal@test.com",
+        password_hash=get_password_hash(password),
+        role="USER"
+    )
+    db.add(user_in)
+    db.commit()
+    
+    login_res = client.post("/auth/token", json={"username": user_in.email, "password": password})
+    token = login_res.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
+
+@pytest.fixture(scope="function")
+def admin_user_token_headers(client, db) -> Dict[str, str]:
+    """
+    Fixture creates an admin user and returns valid Authorization headers.
+    """
+    password = "adminpass123"
+    user_in = User(
+        name="Admin User",
+        email="admin@test.com",
+        password_hash=get_password_hash(password),
+        role="ADMIN"
+    )
+    db.add(user_in)
+    db.commit()
+    
+    login_res = client.post("/auth/token", json={"username": user_in.email, "password": password})
+    token = login_res.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
