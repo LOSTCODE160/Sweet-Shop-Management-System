@@ -6,6 +6,7 @@ from app.db.session import engine
 from app.db.base import Base
 # Import all models to ensure they are attached to Base.metadata
 from app.models import User, Sweet
+from app.api.auth import router as auth_router
 
 # Create tables on application startup
 Base.metadata.create_all(bind=engine) 
@@ -19,6 +20,9 @@ def create_application() -> FastAPI:
         version=settings.PROJECT_VERSION,
         description="Backend for Sweet Shop Management System",
     )
+    
+    # Register Routers
+    application.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 
     # Simple Health Check Endpoint
     @application.get("/health", tags=["Health"])
