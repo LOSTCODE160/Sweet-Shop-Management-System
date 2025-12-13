@@ -7,6 +7,7 @@ from app.db.base import Base
 # Import all models to ensure they are attached to Base.metadata
 from app.models import User, Sweet
 from app.api.auth import router as auth_router
+from jose import jwt
 
 # Create tables on application startup
 Base.metadata.create_all(bind=engine) 
@@ -23,6 +24,20 @@ def create_application() -> FastAPI:
     
     # Register Routers
     application.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+
+    # --- Temporary Test Routes for Phase 5 TDD ---
+    from fastapi import Depends
+    from app.core.deps import get_current_user, get_current_active_admin
+    from app.models.user import User
+
+    @application.get("/test/users/me", tags=["Test"])
+    def read_users_me(current_user: User = Depends(get_current_user)):
+        return {"email": current_user.email, "role": current_user.role}
+
+    @application.get("/test/admin", tags=["Test"])
+    def read_admin_data(current_user: User = Depends(get_current_active_admin)):
+        return {"msg": "Welcome Admin", "email": current_user.email}
+    # ---------------------------------------------
 
     # Simple Health Check Endpoint
     @application.get("/health", tags=["Health"])
