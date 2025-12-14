@@ -11,8 +11,6 @@ from app.api.auth import router as auth_router
 from app.api.sweets import router as sweets_router
 from jose import jwt
 
-# Create tables on application startup
-Base.metadata.create_all(bind=engine) 
 
 def create_application() -> FastAPI:
     """
