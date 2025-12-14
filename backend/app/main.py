@@ -53,6 +53,11 @@ def create_application() -> FastAPI:
 
 app = create_application()
 
+@app.on_event("startup")
+def on_startup():
+    from app.db.init_db import init_db
+    init_db()
+    
 # Add CORS Middleware
 app.add_middleware(
     CORSMiddleware,
